@@ -6,14 +6,16 @@ import org.springframework.stereotype.Component;
 
 import java.net.URI;
 
+@Component
 public class SFTPUploadFileRoute extends RouteBuilder {
     @Override
-    public void configure() throws Exception {
+    public void configure() throws Exception
+    {
         URI toFtpUrl = new URIBuilder()
                 .setScheme("sftp")
                 .setHost("127.0.0.1")
                 .setPort(9922)
-                .setPath("/foo-home/upload")
+                .setPath("in")
                 .addParameter("initialDelay", "10s")
                 .addParameter("delay", "50")
                 .addParameter("username", "foo")
@@ -23,8 +25,9 @@ public class SFTPUploadFileRoute extends RouteBuilder {
                 .build();
 
         StringBuilder fromURL = new StringBuilder();
-        fromURL.append("file:/users/puujee/Desktop/fileTransfer?");
-        fromURL.append("antInclude=*_TESTFILE_*&");
+//        fromURL.append("file:/Users/puujee/in?");
+        fromURL.append("file:input?");
+        fromURL.append("antInclude=*_TURRETA_*&");
         fromURL.append("moveFailed=../error&");
         fromURL.append("move=../done&");
         fromURL.append("preMove=../in-progress&");
@@ -32,6 +35,7 @@ public class SFTPUploadFileRoute extends RouteBuilder {
         fromURL.append("readLockMinAge=1m&");
         fromURL.append("readLockTimeout=70000&");
         fromURL.append("readLockCheckInterval=5000");
-        from(fromURL.toString()).to(toFtpUrl.toString());
+        from(fromURL.toString()).to(toFtpUrl.toString())
+        .log("Uploaded file ${file:name} complete.");
     }
 }
